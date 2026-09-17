@@ -1,0 +1,48 @@
+.mainPage {
+  width: 100%;
+  min-height: 100vh;
+  padding: var(--header-h) 0 0 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.networkMessage {
+  color: var(--surface-lowest);
+
+  width: 100dvw;
+  position: fixed;
+  left: 0;
+  top: var(--header-h);
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  transition: transform 0.5s ease-in-out;
+}
+
+.networkMessage.online {
+  background-color: lime;
+  transform: translateY(-100%);
+}
+
+.networkMessage.offline {
+  background-color: tomato;
+  transform: translateY(0);
+}
+
+/*Para landspace*/
+@media (orientation: landscape) {
+  .mainPage {
+    padding-top: var(--header-h);
+    padding-bottom: 0;
+  }
+}
+
+/* Para desktop */
+@media (min-width: 1024px) {
+  .mainPage {
+    max-width: 100% !important; /* Quitamos el límite de 72rem */
+    padding-top: var(--header-h);
+    padding-bottom: 0;
+  }
+}

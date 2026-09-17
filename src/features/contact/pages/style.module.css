@@ -1,0 +1,35 @@
+.contactPage {
+  padding-bottom: 3rem;
+  text-align: center;
+}
+
+.contactArticle {
+  margin-bottom: 2rem;
+}
+
+.contactContainer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.contactContainer > article {
+  flex-basis: 20rem;
+}
+
+.flexContainer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flexContainer > div {
+  flex-basis: 20ch;
+}
+
+.mapSection {
+  width: 100%;
+  height: 350px;
+}
