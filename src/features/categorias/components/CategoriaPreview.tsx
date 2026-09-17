@@ -44,7 +44,7 @@ export const CategoriaPreview = forwardRef<HTMLAnchorElement, Props>(
           {/* Cartelito escrito a mano, prendido al borde de la foto */}
           <span
             aria-hidden="true"
-            className={`absolute -bottom-3 left-1/2 -translate-x-1/2 ${tagTilt} rounded-sm bg-flower px-3 py-0.5 text-xl capitalize leading-none text-surface-lowest shadow-[0_4px_10px_-4px_rgba(0,0,0,0.35)] transition-transform duration-500 motion-reduce:transition-none group-hover:rotate-0 [font-family:var(--font-hand)]`}
+            className={`absolute -bottom-3 left-1/2 -translate-x-1/2 ${tagTilt} rounded-sm bg-flower px-3 py-0.5 text-xl font-semibold capitalize leading-none text-surface-lowest shadow-[0_4px_10px_-4px_rgba(0,0,0,0.35)] transition-transform duration-500 motion-reduce:transition-none group-hover:rotate-0 [font-family:var(--font-hand)]`}
           >
             {categoria}
           </span>
