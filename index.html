@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chérie Beauty</title>
+    <meta
+      name="description"
+      content="Chérie Beauty · Tu belleza, nuestra pasión."
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/icons/icon-180x180.png"
+      sizes="180x180"
+    />
+    <link rel="mask-icon" href="/favicon.svg" color="#a3325f" />
+    <meta name="theme-color" content="#a3325f" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Cormorant:ital,wght@0,400;0,700;1,400;1,700&family=Caveat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="manifest" href="manifest.webmanifest" />
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('app-theme');
+          var theme = t
+            ? JSON.parse(t)
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      :root {
+        --surface: #f5e2dc;
+      }
+      [data-theme='dark'] {
+        --surface: #2a2028;
+      }
+      html, body {
+        background-color: var(--surface);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

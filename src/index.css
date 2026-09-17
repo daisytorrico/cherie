@@ -1,0 +1,281 @@
+@import 'tailwindcss';
+
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-camel: var(--camel);
+  --color-flower: var(--flower);
+  --color-surface: var(--surface);
+  --color-surface-low: var(--surface-low);
+  --color-surface-lowest: var(--surface-lowest);
+  --color-accent-cool: var(--accent-cool);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-error-main: var(--error-main);
+  --color-error-bg: var(--error-bg);
+  --color-border-color: var(--border-color);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-hand: var(--font-hand);
+
+  --text-caption: var(--font-caption);
+  --text-label: var(--font-label);
+  --text-body: var(--font-body);
+  --text-body-lg: var(--font-body-lg);
+  --text-card-title: var(--font-card-title);
+  --text-section-title: var(--font-section-title);
+  --text-page-title: var(--font-page-title);
+}
+
+:root {
+  /* ============================= */
+  /* COLORS */
+  /* ============================= */
+
+  --surface: #f5e2dc;
+  --surface-lowest: #fffaf8;
+  --surface-low: #f0d8d0;
+
+  --primary: #2b2728; /* Charcoal elegante para textos */
+  --secondary: #b5537a;
+  --flower: #ae3b68;
+  --camel: #dcb888;
+
+  --accent-cool: #a8c4c2;
+  --on-surface-variant: #8a6b78;
+
+  --card-light: #fffaf8;
+  --card-dark: #eed2ca;
+  --border-color: #dcb888;
+
+  --error-main: #d32f2f;
+  --error-bg: #fff5f5;
+
+  --btn-gold-end: #e3c37b;
+  --btn-silver-end: #aca7b9;
+
+  --anchor-color: #b5537a;
+
+  /* ============================= */
+  /* FONTS */
+  /* ============================= */
+
+  --font-serif: 'Cormorant', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-hand: 'Caveat', cursive;
+
+  /* ============================= */
+  /* TYPOGRAPHY */
+  /* ============================= */
+
+  /* Texto */
+  --font-caption: 0.78rem;
+  --font-label: 0.9rem;
+  --font-body: 1rem;
+  --font-body-lg: 1.08rem;
+
+  /* Componentes */
+  --font-card-title: 1.3rem;
+  --font-section-title: 1.65rem;
+  --font-page-title: 1.8rem;
+
+  /* Hero */
+  --font-hero-title: 2.7rem;
+  --font-hero-subtitle: 1.15rem;
+  --font-hero-button: 0.72rem;
+
+  /* Botones */
+  --font-button: 0.92rem;
+
+  /* Modal */
+  --font-modal-title: 1.8rem;
+  --font-modal-description: 1rem;
+  --font-modal-price: 1.15rem;
+
+  /* Compatibilidad */
+  --text-xs: var(--font-caption);
+  --text-sm: var(--font-label);
+  --text-md: var(--font-body);
+  --text-lg: var(--font-body-lg);
+
+  --title-sm: var(--font-card-title);
+  --title-md: var(--font-section-title);
+  --title-lg: var(--font-page-title);
+  --title-xl: var(--font-hero-title);
+
+  --nav-font-size: var(--font-label);
+  --body-font-size: var(--font-body);
+
+  --page-title-size: var(--font-page-title);
+  --page-subtitle-size: var(--font-body-lg);
+  --detail-title-size: var(--font-section-title);
+
+  /* ============================= */
+  /* LAYOUT */
+  /* ============================= */
+
+  --header-h: 60px;
+  --navbar-h: 70px;
+  --cols: 1;
+
+  /* ============================= */
+  /* CARD DE SERVICIO */
+  /* ============================= */
+  /* Fuente única de verdad para el ancho de ServicioCard.
+     Tanto ServicioCarrusel como ServicioList leen este valor,
+     para que la tarjeta se vea igual en ambas vistas. */
+  --card-w: 320px;
+}
+
+[data-theme='dark'] {
+  --surface: #2a2028;
+  --surface-lowest: #352a32;
+  --surface-low: #40323c;
+
+  --primary: #f2ecee; /* Blanco suave para textos en dark mode */
+  --secondary: #d68fa3;
+  --flower: #e3a8ba;
+  --camel: #c9a878;
+
+  --accent-cool: #7fa3a0;
+  --on-surface-variant: #c9a8b8;
+
+  --card-light: #40323c;
+  --card-dark: #4e3c48;
+  --border-color: #5a4652;
+
+  --anchor-color: hsl(340, 55%, 78%);
+
+  --error-main: #ef5350;
+  --error-bg: #3c1616;
+
+  --btn-gold-end: #a88d4d;
+  --btn-silver-end: #5a5766;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    color: var(--anchor-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  p {
+    font-family: inherit;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    line-height: 1.6;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+}
+
+@media (min-width: 481px) {
+  :root {
+    --cols: 2;
+    --header-h: 65px;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --cols: 2;
+
+    --header-h: 70px;
+    --navbar-h: 75px;
+
+    --font-card-title: 1.4rem;
+    --font-section-title: 1.85rem;
+    --font-page-title: 2.2rem;
+
+    --font-hero-title: 3.1rem;
+    --font-hero-subtitle: 1.3rem;
+    --font-hero-button: 0.78rem;
+
+    --font-modal-title: 2rem;
+    --font-modal-description: 1.05rem;
+    --font-modal-price: 1.2rem;
+    --font-button: 0.95rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --cols: 3;
+
+    --header-h: 75px;
+    --navbar-h: 75px;
+
+    --font-card-title: 1.5rem;
+    --font-section-title: 2rem;
+    --font-page-title: 2.4rem;
+
+    --font-hero-title: 3.5rem;
+    --font-hero-subtitle: 1.45rem;
+    --font-hero-button: 0.85rem;
+
+    --font-modal-title: 2.2rem;
+    --font-modal-description: 1.1rem;
+    --font-modal-price: 1.3rem;
+    --font-button: 1rem;
+
+    /* En lg (1024px) el contenedor disponible todavía es angosto
+       (~928px con el padding lateral). Con 280px entran 3 columnas
+       cómodas: 3*280 + 2*24(gap) = 888px. */
+    --card-w: 280px;
+  }
+}
+
+/* Recién en pantallas grandes hay espacio real de sobra:
+   3*340 + 2*24(gap) = 1068px, entra holgado desde ~1280px de viewport. */
+@media (min-width: 1280px) {
+  :root {
+    --card-w: 340px;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
