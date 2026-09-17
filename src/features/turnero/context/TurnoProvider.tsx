@@ -14,11 +14,20 @@ import {
   TurnoContext,
   type TurnoContextValue,
   type ServicioSeleccionado,
+  type TurnoConfirmadoInfo,
   useTurnoContext,
 } from './TurnoContext';
 
 export { useTurnoContext };
-export type { ServicioSeleccionado, TurnoContextValue };
+export type { ServicioSeleccionado, TurnoContextValue, TurnoConfirmadoInfo };
+
+function sumarMinutos(hora: string, minutos: number): string {
+  const [h, m] = hora.split(':').map(Number);
+  const total = h * 60 + m + minutos;
+  const hh = Math.floor(total / 60).toString().padStart(2, '0');
+  const mm = (total % 60).toString().padStart(2, '0');
+  return `${hh}:${mm}`;
+}
 
 interface Props {
   children: ReactNode;
@@ -42,6 +51,8 @@ export function TurnoProvider({ children }: Props) {
   const [enviado, setEnviado] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ultimoTurnoConfirmado, setUltimoTurnoConfirmado] =
+    useState<TurnoConfirmadoInfo | null>(null);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [toastTexto, setToastTexto] = useState<string | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
@@ -144,6 +155,7 @@ export function TurnoProvider({ children }: Props) {
 
   // Validación: Si la duración cambia y el horario seleccionado ya no entra, lo deseleccionamos silenciosamente.
   useEffect(() => {
+    if (enviado) return;
     if (
       horaSeleccionada &&
       !loadingSlots &&
@@ -151,7 +163,7 @@ export function TurnoProvider({ children }: Props) {
     ) {
       setHoraSeleccionada(null);
     }
-  }, [slots, horaSeleccionada, loadingSlots]);
+  }, [slots, horaSeleccionada, loadingSlots, enviado]);
 
   const agregarServicio = (servicio: Servicio) => {
     if (duracionTotal + (servicio.duracion ?? 0) > maxShiftRef.current) {
@@ -171,6 +183,7 @@ export function TurnoProvider({ children }: Props) {
   const abrirCarrito = () => {
     setEnviado(false);
     setError(null);
+    setUltimoTurnoConfirmado(null);
     setCarritoAbierto(true);
   };
 
@@ -181,6 +194,7 @@ export function TurnoProvider({ children }: Props) {
     setError(null);
     setFechaState('');
     setHoraSeleccionada(null);
+    setUltimoTurnoConfirmado(null);
     limpiarCarrito();
   };
 
@@ -213,22 +227,31 @@ export function TurnoProvider({ children }: Props) {
       const dia = fechaADiaSemana(fecha);
       const franjasDelDia = disponibilidad[dia];
 
+      const horaFin = sumarMinutos(horaSeleccionada, duracionTotal);
+      const serviciosConfirmados = seleccionados.map(({ servicio, cantidad }) => ({
+        id: servicio.id,
+        nombre:
+          cantidad > 1 ? `${servicio.nombre} x${cantidad}` : servicio.nombre,
+        duracion: (servicio.duracion ?? 0) * cantidad,
+        precio: (servicio.precio ?? 0) * cantidad,
+      }));
+
       await crearTurno({
         fecha,
         horaInicio: horaSeleccionada,
         clienteNombre: nombreFinal,
         clienteTelefono: telefonoFinal,
         clienteAuthUid, // Siempre existirá al llegar a este punto
-        servicios: seleccionados.map(({ servicio, cantidad }) => ({
-          id: servicio.id,
-          nombre:
-            cantidad > 1 ? `${servicio.nombre} x${cantidad}` : servicio.nombre,
-          duracion: (servicio.duracion ?? 0) * cantidad,
-          precio: (servicio.precio ?? 0) * cantidad,
-        })),
+        servicios: serviciosConfirmados,
         franjasDelDia,
       });
 
+      setUltimoTurnoConfirmado({
+        fecha,
+        horaInicio: horaSeleccionada,
+        horaFin,
+        servicios: serviciosConfirmados,
+      });
       setEnviado(true);
       limpiarCarrito();
 
@@ -274,6 +297,7 @@ export function TurnoProvider({ children }: Props) {
       enviado,
       enviando,
       error,
+      ultimoTurnoConfirmado,
       enviarSolicitud,
       reiniciarProceso,
       carritoAbierto,
@@ -298,6 +322,7 @@ export function TurnoProvider({ children }: Props) {
       enviado,
       enviando,
       error,
+      ultimoTurnoConfirmado,
       carritoAbierto,
       clienteAuthUid,
       clienteEmail,

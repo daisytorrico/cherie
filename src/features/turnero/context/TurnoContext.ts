@@ -6,6 +6,13 @@ export interface ServicioSeleccionado {
   cantidad: number;
 }
 
+export interface TurnoConfirmadoInfo {
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  servicios: { id?: string; nombre: string; duracion?: number; precio?: number }[];
+}
+
 export interface TurnoContextValue {
   seleccionados: ServicioSeleccionado[];
   agregarServicio: (servicio: Servicio) => void;
@@ -24,6 +31,7 @@ export interface TurnoContextValue {
   enviado: boolean;
   enviando: boolean;
   error: string | null;
+  ultimoTurnoConfirmado: TurnoConfirmadoInfo | null;
   enviarSolicitud: () => Promise<void>;
   reiniciarProceso: () => void;
   carritoAbierto: boolean;

@@ -46,15 +46,23 @@ export function ReservaFlotante() {
     enviando,
     enviado,
     error,
+    ultimoTurnoConfirmado,
   } = useTurnoContext();
 
   const { user, abrirAuthModal, clienteData } = useAuth();
   
+  const fechaFinal = ultimoTurnoConfirmado?.fecha || fecha;
+  const horaFinal = ultimoTurnoConfirmado?.horaInicio || horaSeleccionada;
+  const horaFinFinal =
+    ultimoTurnoConfirmado?.horaFin ||
+    (horaSeleccionada ? sumarMinutos(horaSeleccionada, duracionTotal) : '');
+  const nombresServiciosFinal = ultimoTurnoConfirmado
+    ? ultimoTurnoConfirmado.servicios.map((s) => s.nombre).join(' + ')
+    : servicios.map((s) => s.servicio.nombre).join(' + ');
+
   let googleCalendarUrl = '#';
-  if (enviado && horaSeleccionada && fecha) {
-    const horaFin = sumarMinutos(horaSeleccionada, duracionTotal);
-    const nombresServicios = servicios.map(s => s.servicio.nombre).join(' + ');
-    googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Turno en ${SITE_CONFIG.name} - ${nombresServicios}`)}&dates=${fecha.replace(/-/g, '')}T${horaSeleccionada.replace(':', '')}00/${fecha.replace(/-/g, '')}T${horaFin.replace(':', '')}00&details=${encodeURIComponent(SITE_CONFIG.calendarMessage)}&location=${encodeURIComponent(SITE_CONFIG.address)}`;
+  if (enviado && horaFinal && fechaFinal) {
+    googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Turno en ${SITE_CONFIG.name} - ${nombresServiciosFinal}`)}&dates=${fechaFinal.replace(/-/g, '')}T${horaFinal.replace(':', '')}00/${fechaFinal.replace(/-/g, '')}T${horaFinFinal.replace(':', '')}00&details=${encodeURIComponent(SITE_CONFIG.calendarMessage)}&location=${encodeURIComponent(SITE_CONFIG.address)}`;
   }
 
   const estaLogueado = Boolean(user);
@@ -100,7 +108,14 @@ export function ReservaFlotante() {
           <div className="drag-handle" />
         </div>
 
-        <CarritoHeader cantidadTotal={cantidadTotal} onClose={cerrarCarrito} />
+        <CarritoHeader
+          cantidadTotal={
+            enviado
+              ? (ultimoTurnoConfirmado?.servicios.length ?? cantidadTotal)
+              : cantidadTotal
+          }
+          onClose={cerrarCarrito}
+        />
 
         <div className="relative overflow-y-auto px-5 py-3 flex-1">
           {enviado ? (
@@ -111,10 +126,10 @@ export function ReservaFlotante() {
               </h4>
               <div className="rounded-2xl border border-camel/40 bg-surface-low/50 p-4 text-sm text-primary/80 w-full space-y-1">
                 <p>
-                  Día: <strong>{fecha}</strong>
+                  Día: <strong>{fechaFinal}</strong>
                 </p>
                 <p>
-                  Horario: <strong>{horaSeleccionada} hs</strong>
+                  Horario: <strong>{horaFinal} hs</strong>
                 </p>
                 <p className="text-xs font-semibold text-emerald-600 pt-1">
                   Estado: Confirmado
@@ -127,7 +142,7 @@ export function ReservaFlotante() {
                 </p>
               </div>
 
-              {horaSeleccionada && (
+              {horaFinal && (
                 <a
                   href={googleCalendarUrl}
                   target="_blank"
