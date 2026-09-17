@@ -1,0 +1,43 @@
+/* components/layout/NetworkBanner/style.module.css */
+.banner {
+  position: fixed;
+  top: calc(var(--header-h) + 10px); /* Add some margin from header */
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  width: auto;
+  min-width: 250px;
+  border-radius: 9999px;
+  z-index: 1001; /* Ensure it's above header */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-lowest);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  opacity: 1;
+}
+
+.online {
+  background-color: #10b981; /* Emerald 500 */
+}
+
+.offline {
+  background-color: #ef4444; /* Red 500 */
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-20px);
+}
+
+.scrollDown.online,
+.scrollDown.offline {
+  /* Optional: ignore scroll down logic since it's a fixed floating pill now */
+}

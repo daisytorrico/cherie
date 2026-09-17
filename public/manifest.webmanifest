@@ -1,0 +1,29 @@
+{
+  "name": "Chérie Beauty",
+  "short_name": "Chérie",
+  "description": "Servicios de uñas, trenzas y pestañas. Reservá tu turno por WhatsApp.",
+  "theme_color": "#b5537a",
+  "background_color": "#f2e6d0",
+  "display": "standalone",
+  "scope": "/cherie/",
+  "start_url": "/cherie/?source=pwa",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
