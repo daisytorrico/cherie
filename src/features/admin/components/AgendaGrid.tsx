@@ -5,7 +5,10 @@ import {
   formatearFechaLegible,
   esSlotEnPasado,
   obtenerEstiloEstado,
+  esTurnoActual,
+  esTurnoPasado,
 } from '../utils/agendaFormato';
+import { getLocalISO } from '../../../utils/dateUtils';
 import {
   fechaADiaSemana,
   type DisponibilidadSemanal,
@@ -70,6 +73,7 @@ export function AgendaGrid({
   const [mobile, setMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 640 : false
   );
+  const [ahora, setAhora] = useState(() => new Date());
 
   useEffect(() => {
     const checkMobile = () => setMobile(window.innerWidth < 640);
@@ -78,6 +82,12 @@ export function AgendaGrid({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => setAhora(new Date()), 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const hoyStr = getLocalISO(ahora);
   const ALTURA_HORA_PX = mobile ? 120 : 72;
   const horaMinimaMinutos =
     HORARIOS.length > 0 ? horaAMinutos(HORARIOS[0]) : 540;
@@ -106,14 +116,26 @@ export function AgendaGrid({
           <div className="border-b border-r border-camel/40 bg-surface-low" />
 
           {/* Encabezados de días */}
-          {diasVisibles.map((dia) => (
-            <div
-              key={dia}
-              className="border-b border-r border-camel/40 bg-surface-lowest p-3 text-center text-xs font-bold text-primary capitalize select-none"
-            >
-              {formatearFechaLegible(dia, true)}
-            </div>
-          ))}
+          {diasVisibles.map((dia) => {
+            const esHoy = dia === hoyStr;
+            return (
+              <div
+                key={dia}
+                className={`border-b border-r border-camel/40 p-3 text-center text-xs font-bold capitalize select-none transition-colors ${
+                  esHoy
+                    ? 'bg-secondary/10 text-secondary'
+                    : 'bg-surface-lowest text-primary'
+                }`}
+              >
+                <span>{formatearFechaLegible(dia, true)}</span>
+                {esHoy && (
+                  <span className="ml-1.5 inline-block text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-secondary text-white font-black leading-none shadow-xs">
+                    Hoy
+                  </span>
+                )}
+              </div>
+            );
+          })}
 
           {/* Columna Izquierda: Eje de Horas */}
           <div className="flex flex-col border-r border-camel/40 bg-surface-lowest sticky left-0 z-20">
@@ -222,6 +244,30 @@ export function AgendaGrid({
                   );
                 })}
 
+                {/* Línea de tiempo actual (Now) para el día de hoy */}
+                {dia === hoyStr && (() => {
+                  const ahoraMinutos =
+                    ahora.getHours() * 60 + ahora.getMinutes();
+                  const offsetMinutos = ahoraMinutos - horaMinimaMinutos;
+                  const topLineaPx = (offsetMinutos / 60) * ALTURA_HORA_PX;
+                  if (
+                    topLineaPx < 0 ||
+                    topLineaPx > HORARIOS.length * ALTURA_HORA_PX
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <div
+                      className="absolute inset-x-0 z-30 pointer-events-none flex items-center"
+                      style={{ top: `${topLineaPx}px` }}
+                      title={`Hora actual: ${String(ahora.getHours()).padStart(2, '0')}:${String(ahora.getMinutes()).padStart(2, '0')} hs`}
+                    >
+                      <div className="h-2.5 w-2.5 -ml-1 rounded-full bg-rose-500 shadow-sm ring-2 ring-surface-lowest shrink-0" />
+                      <div className="h-[2px] w-full bg-rose-500 shadow-sm" />
+                    </div>
+                  );
+                })()}
+
                 {/* Turnos renderizados con diseño Limpio y Sobrio */}
                 {turnosDelDia.map((turno) => {
                   const minutosInicio = horaAMinutos(turno.horaInicio);
@@ -242,6 +288,25 @@ export function AgendaGrid({
                     esBloqueo
                   );
 
+                  const turnoEsActual =
+                    !esBloqueo &&
+                    turno.estado !== 'cancelado' &&
+                    esTurnoActual(
+                      turno.fecha,
+                      turno.horaInicio,
+                      turno.duracionMinutos,
+                      ahora
+                    );
+
+                  const turnoEsPasado =
+                    !turnoEsActual &&
+                    esTurnoPasado(
+                      turno.fecha,
+                      turno.horaInicio,
+                      turno.duracionMinutos,
+                      ahora
+                    );
+
                   if (turno.estado === 'cancelado') {
                     return (
                       <motion.button
@@ -255,7 +320,9 @@ export function AgendaGrid({
                           height: `${alturaPx - 4}px`,
                         }}
                         title={`Turno Cancelado: ${turno.clienteNombre} (${turno.servicioNombre})`}
-                        className="absolute inset-x-1 z-10 text-left p-1.5 px-2 rounded-xl bg-rose-100/80 dark:bg-rose-950/50 text-rose-800/80 dark:text-rose-300/80 transition-all duration-200 flex flex-col justify-start overflow-hidden cursor-pointer hover:bg-rose-200/80 dark:hover:bg-rose-900/60 shadow-xs border border-rose-200 dark:border-rose-800/50"
+                        className={`absolute inset-x-1 z-10 text-left p-1.5 px-2 rounded-xl bg-rose-100/80 dark:bg-rose-950/50 text-rose-800/80 dark:text-rose-300/80 transition-all duration-200 flex flex-col justify-start overflow-hidden cursor-pointer hover:bg-rose-200/80 dark:hover:bg-rose-900/60 shadow-xs border border-rose-200 dark:border-rose-800/50 ${
+                          turnoEsPasado ? 'opacity-40 saturate-50' : 'opacity-70'
+                        }`}
                       >
                         <div className="flex items-center gap-1.5 min-w-0 mb-0.5 opacity-70 line-through">
                           <XCircle className="h-2.5 w-2.5 shrink-0 text-rose-600 dark:text-rose-400" />
@@ -281,11 +348,24 @@ export function AgendaGrid({
                         top: `${topPx + 2}px`,
                         height: `${alturaPx - 4}px`,
                       }}
-                      className={`absolute inset-x-1 z-10 text-left p-1.5 px-2 rounded-xl shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-start overflow-hidden cursor-pointer ${estiloEstado.card}`}
+                      className={`absolute inset-x-1 text-left p-1.5 px-2 rounded-xl transition-all duration-200 flex flex-col justify-start overflow-hidden cursor-pointer ${
+                        turnoEsActual
+                          ? `z-20 ring-2 ring-secondary ring-offset-2 ring-offset-surface-lowest shadow-lg ${estiloEstado.card}`
+                          : turnoEsPasado
+                            ? `z-10 opacity-55 saturate-[0.70] hover:opacity-100 hover:saturate-100 shadow-xs ${estiloEstado.card}`
+                            : `z-10 shadow-xs hover:shadow-md ${estiloEstado.card}`
+                      }`}
                     >
-                      <div className="flex items-center gap-1.5 min-w-0 mb-0.5">
+                      <div className="flex items-center gap-1.5 min-w-0 mb-0.5 w-full">
                         {esBloqueo ? (
                           <Lock className="h-2.5 w-2.5 shrink-0 opacity-70" />
+                        ) : turnoEsActual ? (
+                          <span className="relative flex h-2 w-2 shrink-0">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                            <span
+                              className={`relative inline-flex rounded-full h-2 w-2 ${estiloEstado.dot}`}
+                            />
+                          </span>
                         ) : (
                           <span
                             className={`h-2 w-2 rounded-full shrink-0 ${estiloEstado.dot}`}
@@ -294,6 +374,13 @@ export function AgendaGrid({
                         <span className="text-[10px] sm:text-xs font-bold truncate">
                           {esBloqueo ? 'Ocupado' : turno.clienteNombre}
                         </span>
+
+                        {turnoEsActual && (
+                          <span className="ml-auto shrink-0 inline-flex items-center gap-1 text-[8px] sm:text-[9px] font-black uppercase tracking-wider bg-white/30 dark:bg-black/40 text-white px-1.5 py-0.5 rounded-full shadow-xs">
+                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                            En curso
+                          </span>
+                        )}
                       </div>
 
                       {!esBloqueo && (

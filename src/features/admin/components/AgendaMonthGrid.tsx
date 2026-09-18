@@ -1,7 +1,11 @@
 import { getLocalISO } from '../../../utils/dateUtils';
 import { useMemo } from 'react';
 import type { TurnoAdmin } from '../types/agenda';
-import { obtenerEstiloEstado } from '../utils/agendaFormato';
+import {
+  obtenerEstiloEstado,
+  esTurnoActual,
+  esTurnoPasado,
+} from '../utils/agendaFormato';
 
 interface AgendaMonthGridProps {
   fechaBase: string; // Fecha dentro del mes objetivo (YYYY-MM-DD)
@@ -147,6 +151,23 @@ export function AgendaMonthGrid({
                         esBloqueo
                       );
 
+                      const turnoEsActual =
+                        !esBloqueo &&
+                        turno.estado !== 'cancelado' &&
+                        esTurnoActual(
+                          turno.fecha,
+                          turno.horaInicio,
+                          turno.duracionMinutos
+                        );
+
+                      const turnoEsPasado =
+                        !turnoEsActual &&
+                        esTurnoPasado(
+                          turno.fecha,
+                          turno.horaInicio,
+                          turno.duracionMinutos
+                        );
+
                       return (
                         <div
                           key={turno.id}
@@ -154,11 +175,21 @@ export function AgendaMonthGrid({
                             e.stopPropagation();
                             onSeleccionarTurno(turno);
                           }}
-                          className={`flex items-center sm:items-start gap-0.5 sm:gap-1 px-0 sm:px-0.5 py-[1px] text-[7px] sm:text-[9px] leading-[1.1] cursor-pointer hover:bg-camel/10 rounded transition-colors ${turno.estado === 'cancelado' ? 'opacity-50 line-through' : ''}`}
-                          title={`${turno.horaInicio} - ${turno.clienteNombre} (${turno.servicioNombre})`}
+                          className={`flex items-center sm:items-start gap-0.5 sm:gap-1 px-1 sm:px-1.5 py-[1.5px] text-[7px] sm:text-[9px] leading-[1.1] cursor-pointer hover:bg-camel/15 rounded transition-all ${
+                            turno.estado === 'cancelado'
+                              ? 'opacity-40 line-through'
+                              : turnoEsActual
+                                ? 'font-bold ring-1 ring-secondary bg-secondary/15 rounded shadow-xs'
+                                : turnoEsPasado
+                                  ? 'opacity-55 saturate-[0.70] hover:opacity-100 hover:saturate-100'
+                                  : ''
+                          }`}
+                          title={`${turno.horaInicio} - ${turno.clienteNombre} (${turno.servicioNombre})${turnoEsActual ? ' (En curso)' : ''}`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 sm:w-1.5 sm:h-1.5 rounded-full shrink-0 sm:mt-[4px] ${estilos.dot}`}
+                            className={`w-1.5 h-1.5 sm:w-1.5 sm:h-1.5 rounded-full shrink-0 sm:mt-[4px] ${estilos.dot} ${
+                              turnoEsActual ? 'ring-2 ring-secondary ring-offset-1 animate-pulse' : ''
+                            }`}
                           />
                           <div className="hidden sm:block line-clamp-2 sm:truncate break-words w-full text-left">
                             <span className="font-bold text-primary/80 tracking-tighter mr-0.5">
@@ -168,6 +199,11 @@ export function AgendaMonthGrid({
                               {turno.servicioNombre}
                             </span>
                           </div>
+                          {turnoEsActual && (
+                            <span className="hidden sm:inline-block text-[7px] font-black uppercase text-secondary bg-secondary/20 px-1 rounded-sm ml-auto shrink-0">
+                              Ahora
+                            </span>
+                          )}
                         </div>
                       );
                     })}

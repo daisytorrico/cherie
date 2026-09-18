@@ -1,4 +1,5 @@
 import type { TurnoAdmin } from '../types/agenda';
+import { getLocalISO } from '../../../utils/dateUtils';
 
 export function formatearFechaLegible(
   fechaISO: string,
@@ -251,3 +252,49 @@ export function formatearDuracion(
 
   return `${horas} h ${mins} min`;
 }
+
+/**
+ * Determina si un turno está transcurriendo en el momento actual.
+ */
+export function esTurnoActual(
+  fecha: string,
+  horaInicio: string,
+  duracionMinutos: number,
+  ahora: Date = new Date()
+): boolean {
+  if (!fecha || !horaInicio) return false;
+  const hoyStr = getLocalISO(ahora);
+  if (fecha !== hoyStr) return false;
+
+  const [h, m] = horaInicio.split(':').map(Number);
+  if (isNaN(h) || isNaN(m)) return false;
+
+  const inicioMinutos = h * 60 + m;
+  const finMinutos = inicioMinutos + (duracionMinutos || 30);
+  const ahoraMinutos = ahora.getHours() * 60 + ahora.getMinutes();
+
+  return ahoraMinutos >= inicioMinutos && ahoraMinutos < finMinutos;
+}
+
+/**
+ * Determina si un turno ya concluyó en el tiempo (su fecha y hora de fin ya pasaron).
+ */
+export function esTurnoPasado(
+  fecha: string,
+  horaInicio: string,
+  duracionMinutos: number,
+  ahora: Date = new Date()
+): boolean {
+  if (!fecha || !horaInicio) return false;
+  const hoyStr = getLocalISO(ahora);
+  if (fecha < hoyStr) return true;
+  if (fecha > hoyStr) return false;
+
+  const [h, m] = horaInicio.split(':').map(Number);
+  if (isNaN(h) || isNaN(m)) return false;
+
+  const finMinutos = h * 60 + m + (duracionMinutos || 30);
+  const ahoraMinutos = ahora.getHours() * 60 + ahora.getMinutes();
+
+  return ahoraMinutos >= finMinutos;
+}

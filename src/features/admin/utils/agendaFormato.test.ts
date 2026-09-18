@@ -6,6 +6,8 @@ import {
   formatearFechaLegible,
   obtenerEstiloEstado,
   esSlotEnPasado,
+  esTurnoActual,
+  esTurnoPasado,
 } from './agendaFormato';
 
 describe('agendaFormato Utils - Clean Architecture & TDD', () => {
@@ -109,6 +111,38 @@ describe('agendaFormato Utils - Clean Architecture & TDD', () => {
 
     it('debe identificar fechas futuras', () => {
       expect(esSlotEnPasado('2030-01-01', '10:00')).toBe(false);
+    });
+  });
+
+  describe('esTurnoActual y esTurnoPasado', () => {
+    const ahoraFija = new Date(2026, 4, 15, 14, 30); // 2026-05-15 14:30
+
+    it('debe identificar un turno en curso actual', () => {
+      // Turno de 14:00 a 15:00 (60 min)
+      expect(esTurnoActual('2026-05-15', '14:00', 60, ahoraFija)).toBe(true);
+      expect(esTurnoPasado('2026-05-15', '14:00', 60, ahoraFija)).toBe(false);
+    });
+
+    it('debe identificar un turno que ya pasó hoy', () => {
+      // Turno de 10:00 a 11:00 (terminó a las 11:00)
+      expect(esTurnoActual('2026-05-15', '10:00', 60, ahoraFija)).toBe(false);
+      expect(esTurnoPasado('2026-05-15', '10:00', 60, ahoraFija)).toBe(true);
+    });
+
+    it('debe identificar un turno futuro hoy', () => {
+      // Turno de 16:00 a 17:00
+      expect(esTurnoActual('2026-05-15', '16:00', 60, ahoraFija)).toBe(false);
+      expect(esTurnoPasado('2026-05-15', '16:00', 60, ahoraFija)).toBe(false);
+    });
+
+    it('debe identificar días anteriores como pasados', () => {
+      expect(esTurnoActual('2026-05-14', '14:00', 60, ahoraFija)).toBe(false);
+      expect(esTurnoPasado('2026-05-14', '14:00', 60, ahoraFija)).toBe(true);
+    });
+
+    it('debe identificar días posteriores como no pasados', () => {
+      expect(esTurnoActual('2026-05-16', '14:00', 60, ahoraFija)).toBe(false);
+      expect(esTurnoPasado('2026-05-16', '14:00', 60, ahoraFija)).toBe(false);
     });
   });
 });
