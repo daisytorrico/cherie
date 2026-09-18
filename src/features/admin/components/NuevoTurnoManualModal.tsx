@@ -97,7 +97,8 @@ export function NuevoTurnoManualModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-[1500] flex items-center justify-center bg-surface-lowest sm:bg-black/50 sm:backdrop-blur-sm sm:p-4 md:p-6 overflow-hidden"
+      className="fixed inset-0 z-[1500] flex items-center justify-center bg-surface-lowest sm:bg-black/60 sm:p-4 md:p-6 overflow-hidden"
+      style={{ backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 15 }}
@@ -182,7 +183,7 @@ export function NuevoTurnoManualModal({
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-white shadow-md hover:bg-emerald-700 transition-all hover:scale-[1.02] cursor-pointer"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  Avisar a la clienta por WhatsApp
+                  Avisar por WhatsApp
                 </a>
               )}
 

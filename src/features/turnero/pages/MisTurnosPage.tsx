@@ -246,7 +246,7 @@ export function MisTurnosPage() {
         titulo="¿Cancelar este turno?"
         mensaje={
           turnoACancelar
-            ? `¿Estás segura de que deseás cancelar tu turno de ${turnoACancelar.servicios.map((s) => s.nombre).join(' + ')} del ${formatearFechaLegible(turnoACancelar.fecha)} a las ${turnoACancelar.horaInicio} hs? El horario quedará libre para otra clienta.`
+            ? `¿Confirmás la cancelación de tu turno de ${turnoACancelar.servicios.map((s) => s.nombre).join(' + ')} del ${formatearFechaLegible(turnoACancelar.fecha)} a las ${turnoACancelar.horaInicio} hs? El horario quedará disponible en la agenda.`
             : ''
         }
         confirmarTexto={cancelando ? 'Cancelando...' : 'Sí, cancelar turno'}

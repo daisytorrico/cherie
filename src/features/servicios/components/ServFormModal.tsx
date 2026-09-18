@@ -136,7 +136,10 @@ export function ServicioFormModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-surface-lowest sm:bg-black/50 sm:backdrop-blur-sm sm:p-4 md:p-6 overflow-hidden">
+    <div
+      className="fixed inset-0 z-[1200] flex items-center justify-center bg-surface-lowest sm:bg-black/60 sm:p-4 md:p-6 overflow-hidden"
+      style={{ backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
+    >
       <form
         onSubmit={handleSubmit}
         className="w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-3xl flex flex-col bg-surface-lowest sm:rounded-3xl border-0 sm:border sm:border-camel p-4 sm:p-8 shadow-2xl overflow-y-auto"

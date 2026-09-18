@@ -68,7 +68,10 @@ export function HistorialClienteModal({
   ).length;
 
   return createPortal(
-    <div className="fixed inset-0 z-[1600] flex items-center justify-center bg-black/50 p-3 sm:p-4 backdrop-blur-xs">
+    <div
+      className="fixed inset-0 z-[1600] flex items-center justify-center bg-black/60 p-3 sm:p-4"
+      style={{ backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
+    >
       <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-camel/30 bg-surface-lowest shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-camel/20 px-5 py-4 bg-surface-low/30 gap-3 shrink-0">
@@ -157,7 +160,7 @@ export function HistorialClienteModal({
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="font-bold text-[11px] uppercase tracking-wider text-primary/70 flex items-center gap-1.5">
                 <FileText className="h-3 w-3 text-secondary" />
-                Notas de la clienta
+                Notas del cliente
               </span>
               {!editandoNotas && (
                 <button
@@ -205,7 +208,7 @@ export function HistorialClienteModal({
               </div>
             ) : (
               <p className="text-xs text-primary/80 italic line-clamp-2">
-                {clienteNotas || 'Sin notas registradas para esta clienta.'}
+                {clienteNotas || 'Sin notas registradas para este cliente.'}
               </p>
             )}
           </div>
@@ -230,7 +233,7 @@ export function HistorialClienteModal({
           ) : historialTurnos.length === 0 ? (
             <div className="py-12 text-center text-xs text-primary/60 space-y-1">
               <p className="font-semibold text-primary">
-                No hay turnos registrados para esta clienta.
+                No hay turnos registrados para este cliente.
               </p>
               <p className="text-[11px]">
                 Cuando agende o complete turnos, aparecerán detallados acá.

@@ -591,47 +591,37 @@ export function DetalleTurnoDrawer({
       {/* Modal de confirmación de cancelación y aviso por WhatsApp */}
       {modalCancelarOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[1600] flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-            <div className="w-full max-w-sm rounded-3xl border border-camel/30 bg-surface-lowest p-5 sm:p-6 shadow-2xl space-y-4">
+          <div
+            className="fixed inset-0 z-[1600] flex items-center justify-center bg-black/60 p-4"
+            style={{ backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
+          >
+            <div className="w-full max-w-sm rounded-2xl border border-camel/30 bg-surface-lowest p-5 sm:p-6 shadow-2xl space-y-4">
               {!cancelacionExitosa ? (
                 <>
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-700 flex items-center justify-center shrink-0">
-                      <AlertCircle className="h-5 w-5" />
+                    <div className="h-9 w-9 rounded-full bg-rose-500/15 text-rose-600 flex items-center justify-center shrink-0">
+                      <AlertCircle className="h-4.5 w-4.5" />
                     </div>
-                    <div>
-                      <h3 className="font-serif text-base sm:text-lg font-bold text-secondary leading-tight">
-                        ¿Cancelar este turno?
-                      </h3>
-                      <p className="text-[11px] text-primary/60 font-medium">
-                        Esta acción liberará el horario en la agenda.
-                      </p>
-                    </div>
+                    <h3 className="font-serif text-lg font-bold text-secondary">
+                      ¿Cancelar este turno?
+                    </h3>
                   </div>
 
-                  <p className="text-xs text-primary/80 leading-relaxed">
-                    ¿Estás segura de cancelar el turno de{' '}
-                    <strong>{turno.clienteNombre}</strong> del{' '}
-                    <strong>{formatearFechaLegible(turno.fecha)}</strong> a las{' '}
-                    <strong>{turno.horaInicio} hs</strong>?
+                  <p className="text-xs text-primary/75 leading-relaxed">
+                    ¿Confirmás la cancelación del turno de{' '}
+                    <strong className="font-semibold text-primary">{turno.clienteNombre}</strong> del{' '}
+                    <strong className="font-semibold text-primary">{formatearFechaLegible(turno.fecha)} a las {turno.horaInicio} hs</strong>? Se liberará el horario en la agenda.
                   </p>
 
                   {turno.clienteTelefono && turno.clienteTelefono !== '-' && (
-                    <label className="flex items-start gap-3 p-3 rounded-2xl border border-camel/30 bg-surface-low/50 cursor-pointer transition-colors hover:bg-surface-low">
+                    <label className="flex items-center gap-2.5 py-1 text-xs text-primary/80 cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={notificarPorWhatsApp}
                         onChange={(e) => setNotificarPorWhatsApp(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 rounded border-camel/40 text-secondary focus:ring-secondary/40 cursor-pointer"
+                        className="h-4 w-4 rounded border-camel/40 text-secondary focus:ring-0 cursor-pointer"
                       />
-                      <div className="text-xs">
-                        <span className="font-bold text-primary block">
-                          Avisar a la clienta por WhatsApp
-                        </span>
-                        <span className="text-primary/70 block text-[11px] mt-0.5">
-                          Al cancelar, verás el botón para mandarle el mensaje predeterminado.
-                        </span>
-                      </div>
+                      <span>Avisar por WhatsApp</span>
                     </label>
                   )}
 
@@ -640,9 +630,9 @@ export function DetalleTurnoDrawer({
                       type="button"
                       disabled={actualizando}
                       onClick={() => setModalCancelarOpen(false)}
-                      className="rounded-full border border-camel/40 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary/70 hover:bg-surface-low transition-colors cursor-pointer disabled:opacity-50"
+                      className="rounded-full px-4 py-2 text-xs font-semibold text-primary/70 hover:text-primary hover:bg-surface-low transition-colors cursor-pointer disabled:opacity-50"
                     >
-                      No, mantener
+                      Mantener
                     </button>
                     <button
                       type="button"
@@ -661,30 +651,25 @@ export function DetalleTurnoDrawer({
                           }
                         }
                       }}
-                      className="rounded-full bg-rose-700 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-xs hover:bg-rose-800 transition-all cursor-pointer disabled:opacity-50"
+                      className="rounded-full bg-rose-700 px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-800 transition-all cursor-pointer disabled:opacity-50"
                     >
-                      {actualizando ? 'Cancelando...' : 'Sí, cancelar turno'}
+                      {actualizando ? 'Cancelando...' : 'Cancelar turno'}
                     </button>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="h-5 w-5" />
+                    <div className="h-9 w-9 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="h-4.5 w-4.5" />
                     </div>
-                    <div>
-                      <h3 className="font-serif text-base sm:text-lg font-bold text-secondary leading-tight">
-                        ¡Turno cancelado!
-                      </h3>
-                      <p className="text-[11px] text-emerald-600 font-semibold">
-                        El horario ya está liberado en la agenda.
-                      </p>
-                    </div>
+                    <h3 className="font-serif text-lg font-bold text-secondary">
+                      Turno cancelado
+                    </h3>
                   </div>
 
-                  <p className="text-xs text-primary/80 leading-relaxed">
-                    El turno de <strong>{turno.clienteNombre}</strong> ha sido dado de baja. Tocá abajo para abrir WhatsApp y notificarle:
+                  <p className="text-xs text-primary/75 leading-relaxed">
+                    El horario quedó liberado. Podés enviar el mensaje de aviso por WhatsApp a <strong className="font-semibold text-primary">{turno.clienteNombre}</strong>:
                   </p>
 
                   <a
@@ -692,17 +677,17 @@ export function DetalleTurnoDrawer({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setModalCancelarOpen(false)}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-emerald-700 transition-all hover:scale-[1.02] cursor-pointer"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 transition-all cursor-pointer"
                   >
                     <MessageCircle className="h-4 w-4 shrink-0" />
                     Enviar mensaje por WhatsApp
                   </a>
 
-                  <div className="pt-2 flex justify-end">
+                  <div className="pt-1 flex justify-end">
                     <button
                       type="button"
                       onClick={() => setModalCancelarOpen(false)}
-                      className="rounded-full border border-camel/40 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary/70 hover:bg-surface-low transition-colors cursor-pointer"
+                      className="rounded-full px-4 py-2 text-xs font-semibold text-primary/70 hover:text-primary hover:bg-surface-low transition-colors cursor-pointer"
                     >
                       Cerrar
                     </button>
