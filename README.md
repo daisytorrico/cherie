@@ -1,60 +1,59 @@
-# Chérie Beauty — Salón Boutique & Agenda de Turnos
+# Chérie Beauty
 
-[![React 19](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-8.0-646cff?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4.0-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Firebase](https://img.shields.io/badge/Firebase-Firestore%20%7C%20Auth-ffca28?logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![PWA Ready](https://img.shields.io/badge/PWA-Offline--First-5a0fc8?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
+[![React](https://img.shields.io/badge/React-19-black?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-black?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8.0-black?style=flat-square&logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-black?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-Firestore%20%7C%20Auth-black?style=flat-square&logo=firebase)](https://firebase.google.com/)
+[![PWA](https://img.shields.io/badge/PWA-Ready-black?style=flat-square&logo=pwa)](https://web.dev/progressive-web-apps/)
 
-> Aplicación web progresiva (PWA) para catálogo de servicios y gestión de turnos de un salón de belleza. Diseñada mobile-first con estética editorial, arquitectura modular y disponibilidad en tiempo real.
+PWA para salón de belleza que incluye reserva de turnos para clientes y panel de administración con agenda.
 
----
+## Funcionalidades
 
-<img src="docs/screenshots/screenMobile.JPG" height="400" alt="Mobile" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="docs/screenshots/screenDesktop.JPG" height="400" alt="Desktop Admin" />
+### Clientes
+- **Catálogo de servicios:** Precios, duración y filtrado por categoría.
+- **Reserva de turnos:** Selección de servicios individuales o combinados con cálculo automático de horarios disponibles.
+- **Cancelaciones:** Cancelación directa desde la app (hasta 48 hs antes) o derivación a WhatsApp.
+- **Favoritos y calendario:** Guardado de servicios en lista de deseos y sincronización con Google Calendar.
+- **Cuentas:** Registro con Google o correo para ver turnos agendados y pasados.
 
----
+### Administración
 
-## Características
+<p align="center">
+  <img src="docs/admin-demo.gif" width="100%" alt="Panel de administración" />
+</p>
 
-- **Catálogo de servicios** con imágenes, precios y tiempos estimados, organizado por categorías.
-- **Reserva inteligente** con carrito multi-servicio, cálculo automático de duración total y selección de horario disponible.
-- **Motor de disponibilidad** que previene solapamientos en tiempo real usando transacciones atómicas de Firestore.
-- **Política de cancelación** automática (directa si restan +48h; por WhatsApp si el plazo es menor).
-- **Lista de favoritos** y sincronización de citas con Google Calendar.
-- **Panel de administración** con agenda semanal/mensual, ABM de servicios y categorías con drag-and-drop, y creación manual de turnos.
-- **Configuración de disponibilidad** por día, con soporte de pausas y días no laborables.
-- **PWA offline-first** instalable en móvil y escritorio, con caché de assets y fuentes vía Workbox.
-
----
+- **Agenda:** Vistas por día, semana y mes con turnos manuales y bloqueos de horario.
+- **Historial de clientes:** Registro de citas anteriores y notas internas por cliente.
+- **Servicios y categorías:** ABM con reordenamiento drag & drop y subida de imágenes.
+- **Promociones:** Banners con descuentos temporales.
+- **Configuración:** Días y horarios de atención, modo mantenimiento y personalización de portada.
+- **WhatsApp:** Mensajes prearmados para confirmar o cancelar turnos con un clic.
 
 ## Stack
 
 | Capa | Tecnologías |
 |---|---|
-| **Core** | React 19, TypeScript, Vite 8 |
-| **Estilos** | Tailwind CSS v4, Motion (Framer Motion) |
-| **Base de datos** | Cloud Firestore |
-| **Autenticación** | Firebase Auth (Google OAuth) |
-| **Imágenes** | Cloudinary REST API |
-| **PWA** | vite-plugin-pwa, Workbox |
-| **Routing** | React Router DOM v7 (HashRouter) |
-| **Testing** | Vitest, React Testing Library |
+| Frontend | React 19, TypeScript, Vite 8, Tailwind CSS v4, Motion |
+| Backend / DB | Cloud Firestore |
+| Autenticación | Firebase Auth (Google OAuth y Email/Password) |
+| Multimedia | Cloudinary |
+| PWA | vite-plugin-pwa, Workbox |
+| Testing | Vitest, React Testing Library |
 
----
-
-## Puesta en marcha
+## Instalación y uso
 
 ```bash
-# 1. Clonar e instalar
+# Clonar e instalar
 git clone https://github.com/daisytorrico/cherie.git
 cd cherie
 npm install
 
-# 2. Desarrollo
+# Iniciar en desarrollo
 npm run dev
 
-# 3. Tests y build
+# Tests y build
 npm test
 npm run build
 ```
