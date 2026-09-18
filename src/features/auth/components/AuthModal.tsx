@@ -2,7 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Eye, EyeOff, Sparkles, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logoText from '../../../assets/logo-text.svg';
 import { SITE_CONFIG } from '../../../core/config';
 
@@ -12,6 +12,9 @@ interface AuthModalProps {
 
 export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
   const {
+    user,
+    esAdmin,
+    loadingAuth,
     modalAuthAbierto,
     modoInicialModal,
     cerrarAuthModal,
@@ -19,9 +22,11 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
     iniciarSesionConEmail,
     registrarConEmail,
     enviarLinkRecuperacion,
+    cerrarSesion,
   } = useAuth();
 
   const location = useLocation();
+  const navigate = useNavigate();
   const esAdminFlow = propAdminFlow ?? location.pathname.startsWith('/admin');
 
   const [modo, setModo] = useState<'login' | 'registro' | 'olvide'>(
@@ -113,6 +118,27 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
     }
   };
 
+  const handleCerrar = () => {
+    cerrarAuthModal();
+    if (esAdminFlow && location.pathname === '/admin/login') {
+      navigate('/');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError(null);
+    setCargando(true);
+    try {
+      await iniciarSesionConGoogle();
+    } catch (err: any) {
+      if (err?.code !== 'auth/popup-closed-by-user') {
+        setError('No se pudo iniciar sesión con Google.');
+      }
+    } finally {
+      setCargando(false);
+    }
+  };
+
   return (
     <AnimatePresence>
       {modalAuthAbierto && (
@@ -122,7 +148,7 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          onClick={cerrarAuthModal}
+          onClick={handleCerrar}
           style={{ backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
           className="fixed inset-0 z-[1300] flex items-center justify-center bg-black/65 p-4 sm:p-6"
         >
@@ -137,8 +163,8 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
           >
         <button
           type="button"
-          onClick={cerrarAuthModal}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-primary transition-colors hover:bg-surface-low"
+          onClick={handleCerrar}
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-primary transition-colors hover:bg-surface-low cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
@@ -189,7 +215,7 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
                 setModo('login');
                 setError(null);
               }}
-              className={`flex-1 rounded-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all ${
+              className={`flex-1 rounded-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                 modo === 'login'
                   ? 'bg-secondary text-surface-lowest shadow-sm'
                   : 'text-primary/70 hover:text-primary'
@@ -203,7 +229,7 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
                 setModo('registro');
                 setError(null);
               }}
-              className={`flex-1 rounded-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all ${
+              className={`flex-1 rounded-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                 modo === 'registro'
                   ? 'bg-secondary text-surface-lowest shadow-sm'
                   : 'text-primary/70 hover:text-primary'
@@ -214,13 +240,14 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
           </div>
         )}
 
-        {/* Solo mostramos inicio con Google si NO es flujo Admin */}
-        {!esAdminFlow && modo !== 'olvide' && (
+        {/* Inicio con Google habilitado tanto para Clientes como para Admin */}
+        {modo !== 'olvide' && (
           <>
             <button
               type="button"
-              onClick={iniciarSesionConGoogle}
-              className="flex w-full items-center justify-center gap-3 rounded-full border border-camel/40 bg-surface-lowest dark:bg-surface-low px-5 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold text-primary shadow-sm transition-all hover:scale-[1.01] hover:border-secondary dark:hover:bg-surface-low/80"
+              disabled={cargando || loadingAuth}
+              onClick={handleGoogleLogin}
+              className="flex w-full items-center justify-center gap-3 rounded-full border border-camel/40 bg-surface-lowest dark:bg-surface-low px-5 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold text-primary shadow-sm transition-all hover:scale-[1.01] hover:border-secondary dark:hover:bg-surface-low/80 cursor-pointer disabled:opacity-50"
             >
               <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -240,7 +267,13 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Continuar con Google</span>
+              <span>
+                {cargando || loadingAuth
+                  ? 'Verificando...'
+                  : esAdminFlow
+                    ? 'Ingresar con Google'
+                    : 'Continuar con Google'}
+              </span>
             </button>
             <div className="my-5 flex items-center gap-3">
               <div className="h-px flex-1 bg-camel/30" />
@@ -250,6 +283,25 @@ export function AuthModal({ esAdminFlow: propAdminFlow }: AuthModalProps) {
               <div className="h-px flex-1 bg-camel/30" />
             </div>
           </>
+        )}
+
+        {/* Aviso en flujo de administración si el usuario autenticado no tiene rol admin */}
+        {esAdminFlow && user && !esAdmin && !loadingAuth && !cargando && (
+          <div className="mb-4 flex flex-col gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-700 dark:text-rose-300">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
+              <span>
+                La cuenta <strong>{user.email}</strong> no tiene permisos de administrador.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => cerrarSesion()}
+              className="self-end text-[11px] font-semibold underline hover:text-rose-900 dark:hover:text-rose-100 cursor-pointer"
+            >
+              Cerrar sesión / Probar con otra cuenta
+            </button>
+          </div>
         )}
 
         {/* MODO LOGIN */}

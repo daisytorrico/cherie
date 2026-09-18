@@ -67,13 +67,13 @@ export function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
+      setLoadingAuth(true);
 
       if (currentUser) {
         try {
           const adminRef = doc(db, 'admins', currentUser.uid);
           const adminSnap = await getDoc(adminRef);
-          setEsAdmin(adminSnap.exists());
+          const esAdminRol = adminSnap.exists();
 
           // Sincronizar usuario a la colección clientes para que el Admin pueda buscarlo
           const clienteRef = doc(db, 'clientes', currentUser.uid);
@@ -88,16 +88,23 @@ export function AuthProvider({ children }: Props) {
           } else {
             setClienteData(clienteSnap.data() as { nombre?: string; telefono?: string });
           }
+
+          setEsAdmin(esAdminRol);
+          setUser(currentUser);
         } catch (error) {
           console.error('Error verificando rol de admin / sync cliente:', error);
           setEsAdmin(false);
+          setUser(currentUser);
           setClienteData(null);
+        } finally {
+          setLoadingAuth(false);
         }
       } else {
+        setUser(null);
         setEsAdmin(false);
         setClienteData(null);
+        setLoadingAuth(false);
       }
-      setLoadingAuth(false);
     });
     return () => unsubscribe();
   }, []);
@@ -106,8 +113,13 @@ export function AuthProvider({ children }: Props) {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
-      await signInWithPopup(auth, provider);
-      cerrarAuthModal();
+      setLoadingAuth(true);
+      const cred = await signInWithPopup(auth, provider);
+      const adminSnap = await getDoc(doc(db, 'admins', cred.user.uid));
+      const esAdminUser = adminSnap.exists();
+      if (esAdminUser || !window.location.pathname.startsWith('/admin')) {
+        cerrarAuthModal();
+      }
     } catch (err: any) {
       // Si el popup fue bloqueado por el navegador, hacemos fallback a redirect
       if (err?.code === 'auth/popup-blocked') {
@@ -124,13 +136,24 @@ export function AuthProvider({ children }: Props) {
         console.error('Error al iniciar sesión con Google:', err);
         throw err;
       }
+    } finally {
+      setLoadingAuth(false);
     }
   };
 
   const iniciarSesionConEmail = async (email: string, pass: string) => {
-    const cred = await signInWithEmailAndPassword(auth, email, pass);
-    cerrarAuthModal();
-    return cred.user;
+    setLoadingAuth(true);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      const adminSnap = await getDoc(doc(db, 'admins', cred.user.uid));
+      const esAdminUser = adminSnap.exists();
+      if (esAdminUser || !window.location.pathname.startsWith('/admin')) {
+        cerrarAuthModal();
+      }
+      return cred.user;
+    } finally {
+      setLoadingAuth(false);
+    }
   };
 
   const registrarConEmail = async (
